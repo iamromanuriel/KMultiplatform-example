@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import org.romanuriel.multiplatform.network.Model.Character
 
 val elementList = listOf(
     ElementModel(id = 1, title = "Tarea 1", description = "Completar informe", date = "2023-11-28"),
@@ -46,22 +48,22 @@ class ElementModel(
 @Composable
 fun Element(
     onClick: () -> Unit,
-    elementModel: ElementModel,
+    character: Character,
     modifier: Modifier = Modifier
 ){
     ListItem(
         modifier = modifier.clickable(enabled = true, onClick = onClick),
         icon = {
-            IndicatorItem(text = elementModel.title)
+            IndicatorItem(text = character.name, image = character.image)
         },
         text = {
             Column {
-                Text(text = elementModel.title)
-                Text(text = elementModel.description, fontSize = 12.sp)
+                Text(text = character.name)
+                Text(text = character.species, fontSize = 12.sp)
             }
         },
         trailing = {
-            Text(text = elementModel.date)
+            Text(text = character.gender)
         }
     )
 }
@@ -70,7 +72,8 @@ fun Element(
 fun IndicatorItem(
     modifier: Modifier = Modifier,
     text: String? = null,
-    @DrawableRes draw: Int ?= null
+    @DrawableRes draw: Int ?= null,
+    image: Any? = null
 ){
     Box(
         modifier = modifier
@@ -79,22 +82,28 @@ fun IndicatorItem(
             .background(Color.LightGray)
 
     ){
-        if (draw != null) {
-            Icon(
-                painter = painterResource(id = draw),
-                contentDescription = null,
-                modifier = modifier.fillMaxSize()
-            )
-        } else {
-            Text(
-                text = text?.getOrNull(0)?.toString() ?: "",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.align(
-                    Alignment.Center
+        when{
+            image != null ->{
+                AsyncImage(model = image, contentDescription = null)
+            }
+            draw != null ->{
+                Icon(
+                    painter = painterResource(id = draw),
+                    contentDescription = null,
+                    modifier = modifier.fillMaxSize()
                 )
-            )
+            }
+            else ->{
+                Text(
+                    text = text?.getOrNull(0)?.toString() ?: "",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.align(
+                        Alignment.Center
+                    )
+                )
+            }
         }
     }
 }
@@ -102,5 +111,5 @@ fun IndicatorItem(
 @Preview(name = "Basic", showBackground = true)
 @Composable
 fun ElementPreview(){
-    Element(onClick = {  }, elementModel = ElementModel(title = "Mantenimiento preventivo", description = "Mantenimiento despuesde ...", date = "12/12/23"))
+
 }
